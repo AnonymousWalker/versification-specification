@@ -37,7 +37,7 @@ class Sniffer(object):
 					self.books[b][int(c)][str(v)] = books[b][c][v] 
 		#make sure output path is present
 		if not os.path.isdir(outdir):
-			os.mrdir(outdir)
+			os.mkdir(outdir)
 
 
 	def sniff(self, name=None):
@@ -49,7 +49,7 @@ class Sniffer(object):
 		self.mapped_verses()
 		for key in self.versification["partialVerses"].keys():
 			self.versification["partialVerses"][key].sort()
-		outfile = self.args["outdir"]+name+".json"
+		outfile = os.path.join(self.args["outdir"], name+".json")
 		with open(outfile, 'w') as otf:
 			json.dump(self.versification, otf, indent=4, ensure_ascii=False)
 
@@ -436,12 +436,13 @@ class USFM_parser(InputParser):
 		self.input_path = None
 
 	def read_files(self, input_path):
-		if not input_path.endswith("/"):
-			input_path += "/"
+		# if not input_path.endswith("/"):
+		# 	input_path += "/"
 		self.input_path = input_path
 		for file in sorted(os.listdir(input_path)):
 			if file.endswith(".usfm"):
-				process = subprocess.Popen(['/usr/bin/usfm-grammar --level=relaxed --filter=scripture '+input_path+file],
+				file_path = os.path.join(input_path,file)
+				process = subprocess.Popen(['usfm-grammar', '--level=relaxed', '--filter=scripture', file_path],
 									 stdout=subprocess.PIPE,
 									 stderr=subprocess.PIPE,
 									 shell=True)
@@ -558,7 +559,7 @@ if __name__ == '__main__':
 	else:
 		raise Exception("Unsupported format:%s", args.format)
 
-	input_path = args.indir + args.name
+	input_path = args.indir# + args.name
 	parser.read_files(input_path=input_path)
 	books = parser.books
 	sniffer_obj = Sniffer(books, outdir=args.outdir, vrs=args.vrs, mappings=args.mappings, rules=args.rules)
