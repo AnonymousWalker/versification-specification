@@ -430,7 +430,8 @@ class USX_parser(InputParser):
 
 class USFM_parser(InputParser):
 	"""Logics related to converting USFM files to a verse_list/book dictionary, required by Sniffer
-	Requires node library usfm-grammar installed"""
+	Requires node library usfm-grammar installed. Example: npm install -g usfm-grammar
+	"""
 	def __init__(self):
 		super(USFM_parser, self).__init__()
 		self.input_path = None
